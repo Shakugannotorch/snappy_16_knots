@@ -8,6 +8,10 @@ Spherogram.
 
 To install this module in SageMath::
 
+  sage -pip install https://github.com/Shakugannotorch/snappy_16_knots/releases/download/v1.0.0/snappy_16_knots-1.0-py2.py3-none-any.whl
+
+or, if you have both Git and `Git LFS <https://git-lfs.com>`_ installed::
+
   sage -pip install git+https://github.com/Shakugannotorch/snappy_16_knots/
 
 A prerequisite for using :code:`snappy_16_knots` is :code:`snappy_15_knots`; the above command
