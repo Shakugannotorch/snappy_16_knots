@@ -3,6 +3,7 @@ import sqlite3
 import binascii
 import re
 import csv
+import bz2
 
 """
 This file contains the functions used to pull the data
@@ -34,7 +35,10 @@ schema_types = {
     'isAugKTG': 'int'
 }
 
-
+def open_csv_file(file_name):
+    path = os.path.join(csv_dir, file_name)
+    opener = bz2.open if path.endswith('.bz2') else open
+    return opener(path, mode='rt')
 
 def make_table(connection, tablename, csv_files, name_index=True):
     """
@@ -43,7 +47,7 @@ def make_table(connection, tablename, csv_files, name_index=True):
     of the csv directory csv_dir, it is given by sub_dir.
     """
     # Get the column names from the first csv file
-    first_csv_file = open(os.path.join(csv_dir, csv_files[0]), 'r')
+    first_csv_file = open_csv_file(csv_files[0])
     csv_reader = csv.reader(first_csv_file)
     columns = next(csv_reader)
     
@@ -69,7 +73,7 @@ def make_table(connection, tablename, csv_files, name_index=True):
     insert_query += ')'
 
     for csv_file in csv_files:
-        csv_reader = csv.reader(open(os.path.join(csv_dir, csv_file)))
+        csv_reader = csv.reader(open_csv_file(csv_file))
         assert columns == next(csv_reader)
         for row in csv_reader:
             data_list = row
@@ -103,8 +107,8 @@ def is_stale(dbfile, sourceinfo):
     
 if __name__ == '__main__':
     manifold_db = '16_knots.sqlite'
-    manifold_data = {'HT_links': {'csv_files': ['alternating_knots_16.csv',
-                                                'nonalternating_knots_16.csv']}}
+    manifold_data = {'HT_links': {'csv_files': ['alternating_knots_16.csv.bz2',
+                                                'nonalternating_knots_16.csv.bz2']}}
     
     if is_stale(manifold_db, manifold_data):
         if os.path.exists(manifold_db):

@@ -3,11 +3,64 @@ This package provides a database of 16 crossing knots for use
 with the spherogram and snappy packages.
 """
 
-import re, sys, subprocess, os, shutil, glob, sysconfig
+import re, sys, subprocess, os, shutil, glob
+import requests
 from setuptools import setup, Command
 from setuptools.command.build_py import build_py
 
 sqlite_files = ['16_knots.sqlite']
+
+pattern = ('version https://git-lfs.github.com/spec/v1\n'
+           'oid sha256:([a-z0-9]+)\n'
+           'size ([0-9]+)')
+
+def get_lfs_file_url(user, repo, object_id, size):
+    """
+    Use the GitHub API to get URL to a LFS file.  The URL is dynamic and
+    is good for an hour or so.
+    """
+    url = f'https://github.com/{user}/{repo}.git/info/lfs/objects/batch'
+    body = {'operation': 'download',
+            'transfer': ['basic'],
+            'objects': [{'oid': object_id, 'size': size}]}
+    headers = {'Accept':'application/vnd.git-lfs+json',
+               'Content-Type': 'application/json'}
+    response = requests.post(url, json=body, headers=headers)
+    if response.status_code != 200:
+        raise ConnectionError('Could not get download URL from GitHub')
+    data = response.json()['objects'][0]
+    assert data['oid'] == object_id
+    return data['actions']['download']['href']
+
+
+def download_as_file(url, path):
+    """
+    Based on https://stackoverflow.com/questions/16694907/
+    """
+    with requests.get(url, stream=True) as response:
+        with open(path, 'wb') as file:
+            shutil.copyfileobj(response.raw, file)
+
+
+def fetch_if_needed(path):
+    if os.path.getsize(path) < 1000:
+        with open(path) as file:
+            match = re.match(pattern, file.read())
+            if match:
+                oid, length = match.groups()
+                length = int(length)
+                url = get_lfs_file_url('Shakugannotorch', 'snappy_16_knots', oid, length)
+                os.rename(path, path + '.orig')
+                print(f'Fetching data file {os.path.basename(path)}...',
+                      end='', flush=True)
+                download_as_file(url, path)
+                if int(length) != os.path.getsize(path):
+                    raise ConnectionError('Download was wrong size.')
+                size = length/(1024**2)
+                print(f' Successfully retrieved {size:.1f}M')
+
+            
+# --- end git lfs file stuff 
 
 def check_call(args):
     try:
@@ -42,14 +95,13 @@ class BuildPy(build_py):
     """
     def initialize_options(self):
         build_py.initialize_options(self)
-        os.chdir('manifold_src')        
+        os.chdir('manifold_src')
         csv_source_files = glob.glob(
-            os.path.join('original_manifold_sources', '*.csv'))
+            os.path.join('original_manifold_sources', '*.csv*'))
         # When there are no csv files, we are in an sdist tarball
-        if len(csv_source_files) != 0:
-            if self.force:
-                for file in glob.glob('*.sqlite'):
-                    os.remove(file)
+        if len(csv_source_files) == 0:
+            fetch_if_needed('plausible_knots.sqlite')
+        else:
             print('Rebuilding stale sqlite databases from csv sources if necessary...')
             check_call([sys.executable, 'make_sqlite_db.py'])
         os.chdir('..')
