@@ -85,8 +85,8 @@ class Clean(Command):
         for dir in ['build', 'dist'] + glob.glob('*.egg-info'):
             if os.path.exists(dir):
                 shutil.rmtree(dir)
-        for file in glob.glob('manifold_src/*.sqlite'):
-            os.remove(file)
+        #for file in glob.glob('manifold_src/*.sqlite'):
+        #    os.remove(file)
 
 
 class BuildPy(build_py):
@@ -100,7 +100,7 @@ class BuildPy(build_py):
             os.path.join('original_manifold_sources', '*.csv*'))
         # When there are no csv files, we are in an sdist tarball
         if len(csv_source_files) == 0:
-            fetch_if_needed('plausible_knots.sqlite')
+            fetch_if_needed('16_knots.sqlite')
         else:
             print('Rebuilding stale sqlite databases from csv sources if necessary...')
             check_call([sys.executable, 'make_sqlite_db.py'])
