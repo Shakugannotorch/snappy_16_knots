@@ -94,6 +94,22 @@ def make_table(connection, tablename, csv_files, name_index=True):
             (tablename, column, tablename, column))
     connection.commit()
             
+pattern = ('version https://git-lfs.github.com/spec/v1\n'
+           'oid sha256:([a-z0-9]+)\n'
+           'size ([0-9]+)')
+
+def is_stamp(sourceinfo):
+    for table in sourceinfo:
+        for csv_file in sourceinfo[table]['csv_files']:
+            path = os.path.join(csv_dir, csv_file)
+            if os.path.getsize(path) < 1000:
+                with open(path) as file:
+                    match = re.match(pattern, file.read())
+                    if not match:
+                        return False
+                
+    return True
+
 def is_stale(dbfile, sourceinfo):
     if not os.path.exists(dbfile):
         return True
@@ -101,7 +117,7 @@ def is_stale(dbfile, sourceinfo):
     for table in sourceinfo:
         for csv_file in sourceinfo[table]['csv_files']:
             csv_path = os.path.join(csv_dir, csv_file)
-            if os.path.getmtime(csv_path) > dbmodtime:
+            if not is_stamp(sourceinfo) and os.path.getmtime(csv_path) > dbmodtime:
                 return True
     return False
     
