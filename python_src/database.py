@@ -34,7 +34,7 @@ def get_tables(ManifoldTable):
             M._set_DTcode(row[2])
 
 
-    class ExtendedHTLinkExteriors(LinkExteriorsTable):
+    class HTLinkExteriors(LinkExteriorsTable):
         """
         This table extends the HTLinkExteriors table from snappy_manifolds
         with 15 and 16 crossing knots (no links with multiple components).
@@ -137,7 +137,7 @@ def get_tables(ManifoldTable):
             else:
                 self._filter = ' and '.join(conditions)
 
-    return [ExtendedHTLinkExteriors()]
+    return [HTLinkExteriors()]
 
 def connect_to_db(db_path):
     """
