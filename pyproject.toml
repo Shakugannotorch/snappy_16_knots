@@ -1,10 +1,13 @@
 [build-system]
-requires = ["setuptools >= 77.0.3", "requests"]
+requires = ["setuptools>=77.0.3", "requests"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "snappy_16_knots"
 dynamic = ["version"]
+dependencies = [
+    "snappy_15_knots"
+]
 requires-python = ">=3.8"
 authors = [
   {name = "Marc Culler"},
