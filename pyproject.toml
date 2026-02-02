@@ -15,7 +15,7 @@ authors = [
 ]
 description = "Database of 16 crossing knots"
 readme = "README.rst"
-license = "GPL-2.0-or-later"
+license = {text = "GPLv2+"}
 keywords = ["knots"]
 classifiers = [
   "Development Status :: 5 - Production/Stable",	
