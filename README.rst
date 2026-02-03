@@ -19,32 +19,32 @@ should be able to automatically install :code:`snappy_15_knots`, if it is not re
 
 To use this module with SnapPy, one can do::
 
-  sage: import snappy, snappy_16_knots
+  >>> import snappy, snappy_16_knots
 
 The extended census can then be accessed via SnapPy's :code:`Manifold` class. 
 For example::
 
-  sage: m = snappy.Manifold('K16a101')
-  sage: m.triangulation_isosig()
+  >>> m = snappy.Manifold('K16a101')
+  >>> m.triangulation_isosig()
   'yLLLPLLAwMLzwQQLQcbehfiljimnonrqrsstuvwxxxdjqdgtehqxqajhfuajoffaacv_bacB'
 
-  sage: m = snappy.Manifold('K16a101(2,3)')
-  sage: m.triangulation_isosig()
+  >>> m = snappy.Manifold('K16a101(2,3)')
+  >>> m.triangulation_isosig()
   ''yLLLPLLAwMLzwQQLQcbehfiljimnonrqrsstuvwxxxdjqdgtehqxqajhfuajoffaacv_bacB(2,3)''
 
 The iterator for all manifolds in this module, along with those in 
 :code:`snappy_15_knots`, is :code:`snappy.HTLinkExteriors`. 
 For example::
 
-  sage: len(snappy.HTLinkExteriors)
+  >>> len(snappy.HTLinkExteriors)
   1822509
 
-  sage: for M in snappy.HTLinkExteriors[-9:-6]: print(M, M.volume()) 
+  >>> for M in snappy.HTLinkExteriors[-9:-6]: print(M, M.volume()) 
   K16n1008898(0,0) 22.8613896980723
   K16n1008899(0,0) 17.0540820108716
   K16n1008900(0,0) 16.9295548661239
 
-  sage: for M in snappy.HTLinkExteriors(num_cusps=2)[-3:]: print(M, M.volume(), M.num_cusps())
+  >>> for M in snappy.HTLinkExteriors(num_cusps=2)[-3:]: print(M, M.volume(), M.num_cusps())
   L14n40046(0,0)(0,0) 18.6813172532672 2
   L14n40047(0,0)(0,0) 14.8257607028697 2
   L14n40048(0,0)(0,0) 23.2884335333958 2
