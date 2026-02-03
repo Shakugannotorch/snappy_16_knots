@@ -6,20 +6,20 @@ knots, and includes the source code for the Python module
 :code:`snappy_16_knots` which packages them up for use in SnapPy and
 Spherogram. 
 
-To install this module in SageMath::
+To install this package, do::
 
-  sage -pip install https://github.com/Shakugannotorch/snappy_16_knots/releases/download/v1.0.0/snappy_16_knots-1.0-py2.py3-none-any.whl
+  python -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ snappy_16_knots
 
-or, if you have both Git and `Git LFS <https://git-lfs.com>`_ installed::
+or, if you are using SageMath::
 
-  sage -pip install git+https://github.com/Shakugannotorch/snappy_16_knots/
+  sage -pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ snappy_16_knots
 
 A prerequisite for using :code:`snappy_16_knots` is :code:`snappy_15_knots`; the above command
 should be able to automatically install :code:`snappy_15_knots`, if it is not readily installed.
 
 To use this module with SnapPy, one can do::
 
-  sage: from snappy_16_knots import snappy
+  sage: import snappy, snappy_16_knots
 
 The extended census can then be accessed via SnapPy's :code:`Manifold` class. 
 For example::
@@ -33,18 +33,18 @@ For example::
   ''yLLLPLLAwMLzwQQLQcbehfiljimnonrqrsstuvwxxxdjqdgtehqxqajhfuajoffaacv_bacB(2,3)''
 
 The iterator for all manifolds in this module, along with those in 
-:code:`snappy_15_knots`, is :code:`snappy.ExtendedHTLinkExteriors`. 
+:code:`snappy_15_knots`, is :code:`snappy.HTLinkExteriors`. 
 For example::
 
-  sage: len(snappy.ExtendedHTLinkExteriors)
+  sage: len(snappy.HTLinkExteriors)
   1822509
 
-  sage: for M in snappy.ExtendedHTLinkExteriors[-9:-6]: print(M, M.volume()) 
+  sage: for M in snappy.HTLinkExteriors[-9:-6]: print(M, M.volume()) 
   K16n1008898(0,0) 22.8613896980723
   K16n1008899(0,0) 17.0540820108716
   K16n1008900(0,0) 16.9295548661239
 
-  sage: for M in snappy.ExtendedHTLinkExteriors(num_cusps=2)[-3:]: print(M, M.volume(), M.num_cusps())
+  sage: for M in snappy.HTLinkExteriors(num_cusps=2)[-3:]: print(M, M.volume(), M.num_cusps())
   L14n40046(0,0)(0,0) 18.6813172532672 2
   L14n40047(0,0)(0,0) 14.8257607028697 2
   L14n40048(0,0)(0,0) 23.2884335333958 2

@@ -37,14 +37,12 @@ def get_tables(ManifoldTable):
     class HTLinkExteriors(LinkExteriorsTable):
         """
         This table extends the HTLinkExteriors table from snappy_manifolds
-        with 15 and 16 crossing knots (no links with multiple components).
-        They are ordered so that the HTLinkExteriors come first, then the 
-        alternating 15 and 16 crossing knots, then the nonalternating 15 and 
-        16 crossing knots.
+        with 16 crossing knots (no links with multiple components),
+        by attaching this table of 16 crossing knots to the table in snappy_15_knots
 
-        >>> ExtendedHTLinkExteriors.identify(LinkExteriors['8_20'])
+        >>> HTLinkExteriors.identify(LinkExteriors['8_20'])
         K8n1(0,0)
-        >>> Mylist = ExtendedHTLinkExteriors(alternating=False)[32.0:32.1]
+        >>> Mylist = HTLinkExteriors(alternating=False)[32.0:32.1]
         >>> len(Mylist)
         4
         >>> for L in Mylist:
