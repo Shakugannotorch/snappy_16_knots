@@ -2,7 +2,7 @@
 We do only a very basic test for this module, since most of the
 doctests are run by snappy.
 
->>> HT = get_DT_tables()
+>>> HT = get_DT_tables()[0]
 >>> len(HT)
 1822509
 >>> str(HT['L12n345'])
