@@ -18,9 +18,10 @@ def get_tables(ManifoldTable):
     Functions such as this one are meant to be called in the
     __init__.py module in snappy proper.  To avoid circular imports,
     it takes as argument the class ManifoldTable from database.py in
-    snappy. From there, it builds all of the Manifold tables from the
-    sqlite databases manifolds.sqlite and more_manifolds.sqlite in
-    manifolds_src, and returns them all as a list.
+    snappy. From there, it builds all of the Manifold tables from, for example
+    here the sqlite databases 16_knots.sqlite in manifolds_src and 
+    15_knots.sqlite from snappy_15_knots, and returns the merged table as
+    an element in a list.
     """
 
     class LinkExteriorsTable(ManifoldTable):
@@ -36,7 +37,7 @@ def get_tables(ManifoldTable):
 
     class HTLinkExteriors(LinkExteriorsTable):
         """
-        This table extends the HTLinkExteriors table from snappy_manifolds
+        This table extends the HTLinkExteriors table from snappy_15_knots
         with 16 crossing knots (no links with multiple components),
         by attaching this table of 16 crossing knots to the table in snappy_15_knots
 
@@ -155,7 +156,7 @@ def connect_to_db(db_path):
 
 def get_DT_tables():
     """
-    Returns two barebones databases for looking up DT codes by name. 
+    Returns a barebone databases for looking up DT codes by name. 
     """
     class DTCodeTable(object):
         """
@@ -179,8 +180,57 @@ def get_DT_tables():
             length_query = 'select count(*) from ' + self._table
             return self._cursor.execute(length_query).fetchone()[0]
 
+    class ExtendedDTCodeTable(DTCodeTable):
+        """
+        This table extends the DTCodeTable from snappy_15_knots,
+        appending the 16 crossing knots.
+        """
+        def __init__(self, **kwargs):
+            DTCodeTable.__init__(self, 
+                                 table = 'HT_links_view',
+                                 db_path = original_database_path,
+                                 **kwargs)
+            
+            view_name = 'all_HT_links_view'
 
-    HTLinkDTcodesExtended = DTCodeTable(name='HTLinkDTcodesExtended',
-                                        table='HT_links_view',
-                                        db_path=database_path)
-    return [HTLinkDTcodesExtended]
+            conn = self._connection
+            cursor = conn.cursor()
+
+            # Dictionary specifying tables to append
+            # Keys: paths of databases -> Values: tables contained by given databases
+            # All tables specified will be appended to the view <view_name>
+            sql_dict = {
+                database_path : ['HT_links']
+            }
+
+            table_dict = dict() 
+            # records the aliases of databases containing a given table
+            alias_dict = dict() 
+            # records the alias of a given database file (1-to-1)
+
+            for i, sql_path in enumerate(sql_dict.keys(), start = 1):
+                alias = f'db{i}'
+                alias_dict.update({sql_path : alias})
+
+                for table_name in sql_dict[sql_path]:
+                    if table_name not in table_dict.keys():
+                        table_dict.update({table_name : [alias]})
+                    else:
+                        table_dict.update({table_name : table_dict[table_name] + [alias]})
+
+                cursor.execute('ATTACH DATABASE ? AS ?', (sql_path, alias))
+
+            select_statements = [f'SELECT * FROM {self._table}']
+            for table_name in table_dict.keys():
+                for alias in table_dict[table_name]:
+                    select_statements.append(f"SELECT * FROM {alias}.{table_name}")
+            union_query = ' UNION ALL '.join(select_statements)
+
+            create_view_sql = f"CREATE TEMPORARY VIEW {view_name} AS {union_query}"
+            cursor.execute(create_view_sql)
+            cursor.close()
+
+            self._table = view_name
+            self._select = f'select DT from {view_name} '
+            
+    return [ExtendedDTCodeTable()]

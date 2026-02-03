@@ -2,9 +2,9 @@
 We do only a very basic test for this module, since most of the
 doctests are run by snappy.
 
->>> Rolfsen, HT = get_DT_tables()
->>> len(Rolfsen), len(HT)
-(1215, 180510)
+>>> HT = get_DT_tables()
+>>> len(HT)
+1822509
 >>> str(HT['L12n345'])
 'lbbjceGkjHILFadb.010001100011'
 """
