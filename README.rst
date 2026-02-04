@@ -8,11 +8,11 @@ Spherogram.
 
 To install this package, do::
 
-  python -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ snappy_16_knots
+  python -m pip install --upgrade --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ snappy_16_knots
 
 or, if you are using SageMath::
 
-  sage -pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ snappy_16_knots
+  sage -pip install --upgrade --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ snappy_16_knots
 
 A prerequisite for using :code:`snappy_16_knots` is :code:`snappy_15_knots`; the above command
 should be able to automatically install :code:`snappy_15_knots`, if it is not readily installed.
