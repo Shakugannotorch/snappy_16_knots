@@ -1,4 +1,4 @@
-__version__ = '1.14b'
+__version__ = '1.15b'
 
 def version():
     return __version__
@@ -13,4 +13,4 @@ try:
         if name not in snappy.database_objects:
             snappy.database_objects.append(name)
 except ImportError:
-    raise RuntimeError('Error happened when loading data of knots of 16 crossings to SnapPy')
+    pass
