@@ -17,9 +17,19 @@ or, if you are using SageMath::
 A prerequisite for using :code:`snappy_16_knots` is :code:`snappy_15_knots`; the above command
 should be able to automatically install :code:`snappy_15_knots`, if it is not readily installed.
 
-To use this module with SnapPy, do::
+To use this module with SnapPy, you need to have SnapPy version 3.3.2 or later installed. You can check your SnapPy version with::
 
-  >>> import snappy, snappy_16_knots
+  >>> import snappy
+  >>> snappy.__version__
+  '3.3.2'
+
+If you have an older version of SnapPy, you can upgrade it with::
+
+  python -m pip install --upgrade snappy
+
+or, if you are using SageMath::
+
+  sage -pip install --upgrade snappy
 
 The extended census can then be accessed via SnapPy's :code:`Manifold` class. 
 For example::
