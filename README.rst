@@ -31,7 +31,7 @@ or, if you are using SageMath::
 
   sage -pip install --upgrade snappy
 
-The extended census can then be accessed via SnapPy's :code:`Manifold` class. 
+With the above setup, simply importing :code:`snappy` will automatically import :code:`snappy_16_knots` and make the extended census available in SnapPy. The extended census can then be accessed via SnapPy's :code:`Manifold` class. 
 For example::
 
   >>> m = snappy.Manifold('K16a101')
