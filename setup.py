@@ -19,7 +19,7 @@ pattern = ('version https://git-lfs.github.com/spec/v1\n'
            'size ([0-9]+)')
 
 url = 'https://github.com/Shakugannotorch/snappy_16_knots/releases/download/'
-url += f'{version}_as_released/16_knots.sqlite'
+url += f'v{version}/16_knots.sqlite'
 
 def download_as_file(url, path):
     """
