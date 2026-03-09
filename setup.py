@@ -8,30 +8,18 @@ import requests
 from setuptools import setup, Command
 from setuptools.command.build_py import build_py
 
+# Get version number from module
+version = re.search("__version__ = '(.*)'",
+                    open('python_src/__init__.py').read()).group(1)
+
 sqlite_files = ['16_knots.sqlite']
 
 pattern = ('version https://git-lfs.github.com/spec/v1\n'
            'oid sha256:([a-z0-9]+)\n'
            'size ([0-9]+)')
 
-def get_lfs_file_url(user, repo, object_id, size):
-    """
-    Use the GitHub API to get URL to a LFS file.  The URL is dynamic and
-    is good for an hour or so.
-    """
-    url = f'https://github.com/{user}/{repo}.git/info/lfs/objects/batch'
-    body = {'operation': 'download',
-            'transfer': ['basic'],
-            'objects': [{'oid': object_id, 'size': size}]}
-    headers = {'Accept':'application/vnd.git-lfs+json',
-               'Content-Type': 'application/json'}
-    response = requests.post(url, json=body, headers=headers)
-    if response.status_code != 200:
-        raise ConnectionError('Could not get download URL from GitHub')
-    data = response.json()['objects'][0]
-    assert data['oid'] == object_id
-    return data['actions']['download']['href']
-
+url = 'https://github.com/Shakugannotorch/snappy_16_knots/releases/download/'
+url += f'{version}_as_released/16_knots.sqlite'
 
 def download_as_file(url, path):
     """
@@ -49,7 +37,6 @@ def fetch_if_needed(path):
             if match:
                 oid, length = match.groups()
                 length = int(length)
-                url = get_lfs_file_url('Shakugannotorch', 'snappy_16_knots', oid, length)
                 os.rename(path, path + '.orig')
                 print(f'Fetching data file {os.path.basename(path)}...',
                       end='', flush=True)
@@ -58,9 +45,6 @@ def fetch_if_needed(path):
                     raise ConnectionError('Download was wrong size.')
                 size = length/(1024**2)
                 print(f' Successfully retrieved {size:.1f}M')
-
-            
-# --- end git lfs file stuff 
 
 def check_call(args):
     try:
@@ -153,10 +137,6 @@ class Test(Command):
         sys.path.insert(0, build_lib_dir)
         from snappy_16_knots.test import run_tests
         sys.exit(run_tests())
-
-# Get version number from module
-version = re.search("__version__ = '(.*)'",
-                    open('python_src/__init__.py').read()).group(1)
 
 setup(
     name = 'snappy_16_knots',
